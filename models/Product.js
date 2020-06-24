@@ -10,7 +10,10 @@ const ProductSchema = new mongoose.Schema({
         type: CategorySchema,
         required: true,
     },
-    remainingQuantity: Number,
+    remainingQuantity: {
+        type: Number,
+        default: 0,
+    },
     price: Number,
 });
 

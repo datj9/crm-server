@@ -1,4 +1,5 @@
 const { Product } = require("../../../models/Product");
+const { Category } = require("../../../models/Category");
 
 const getProducts = async (req, res) => {
     try {
@@ -9,4 +10,21 @@ const getProducts = async (req, res) => {
     }
 };
 
-module.exports = { getProducts };
+const createProduct = async (req, res) => {
+    const { name, category, remainingQuantity, price } = req.body;
+    const foundCategory = await Category.findById(category);
+    const product = new Product({
+        name,
+        category: foundCategory,
+        remainingQuantity,
+        price,
+    });
+    try {
+        await product.save();
+        return res.status(201).json(product);
+    } catch (error) {
+        return res.status(500).json(error);
+    }
+};
+
+module.exports = { getProducts, createProduct };
