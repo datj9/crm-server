@@ -17,6 +17,15 @@ const ProductSchema = new mongoose.Schema({
     price: Number,
 });
 
+ProductSchema.method("transform", function () {
+    const obj = this.toObject();
+
+    obj.id = obj._id;
+    delete obj._id;
+    delete obj.__v;
+    return obj;
+});
+
 const Product = new mongoose.model("Product", ProductSchema);
 
 module.exports = {
