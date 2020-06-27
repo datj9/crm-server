@@ -18,7 +18,7 @@ const createCustomer = async (req, res) => {
     const { name, gender, email, phoneNumber } = req.body;
     const errors = {};
 
-    if (!name || isEmpty(name)) errors.name = "Name is required";
+    if (!name) errors.name = "Name is required";
     if (!gender == undefined) errors.gender = "Gender is required";
     if (Object.keys(errors).length > 0) return res.status(400).json(errors);
 
@@ -45,6 +45,7 @@ const deleteCustomer = async (req, res) => {
     const { customerId } = req.params;
 
     if (!ObjectId.isValid(customerId)) return res.status(400).json({ customerId: "CustomerId is invalid" });
+
     try {
         const customer = await Customer.findById(customerId);
         if (!customer) return res.status(404).json({ error: "Customer not found" });
