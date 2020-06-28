@@ -1,9 +1,5 @@
 const Customer = require("../../../models/Customer");
-const isEmpty = require("validator/lib/isEmpty");
-const isNumeric = require("validator/lib/isNumeric");
-const isInt = require("validator/lib/isInt");
 const isEmail = require("validator/lib/isEmail");
-
 const ObjectId = require("mongoose").Types.ObjectId;
 
 const getCustomers = async (req, res) => {
@@ -25,15 +21,17 @@ const createCustomer = async (req, res) => {
     if (Object.keys(errors).length > 0) return res.status(400).json(errors);
 
     if (typeof gender != "number" || (gender != 1 && gender != 0)) {
-        return res.status(400).json({ gender: "Gender is invalid" });
+        errors.gender = "gender is invalid";
     }
     if (typeof email != "undefined" && (typeof email != "string" || !isEmail(email))) {
-        return res.status(400).json({ gender: "Gender is invalid" });
+        errors.email = "email is invalid";
     }
-
+    if (typeof phoneNumber != "undefined" && (typeof phoneNumber != "string" || phoneNumber.length != 10)) {
+        errors.phoneNumber = "phoneNumber is invalid";
+    }
     const newCustomer = new Customer({
         name,
-        gender,
+        gender: gender == 0 ? "Nam" : "Nữ",
         email,
         phoneNumber,
     });

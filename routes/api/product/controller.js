@@ -46,10 +46,10 @@ const createProduct = async (req, res) => {
     if (typeof storage != "undefined" && typeof storage != "number") {
         errors.storage = "storage is invalid";
     }
-    if (typeof thumbnailUrl != "undefined" && !isUrl(thumbnailUrl)) {
+    if (typeof thumbnailUrl != "undefined" && (typeof thumbnailUrl != "string" || !isUrl(thumbnailUrl))) {
         errors.thumbnailUrl = "thumbnailUrl is invalid";
     }
-    if (typeof imageUrl != "undefined" && !isUrl(imageUrl)) {
+    if (typeof imageUrl != "undefined" && (typeof imageUrl != "string" || !isUrl(imageUrl))) {
         errors.imageUrl = "imageUrl is invalid";
     }
     if (Object.keys(errors).length > 0) return res.status(400).json(errors);
