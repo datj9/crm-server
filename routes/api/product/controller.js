@@ -1,6 +1,7 @@
 const { Product } = require("../../../models/Product");
 const { Category } = require("../../../models/Category");
 const isInt = require("validator/lib/isInt");
+const isUrl = require("validator/lib/isURL");
 const ObjectId = require("mongoose").Types.ObjectId;
 
 const getProducts = async (req, res) => {
@@ -17,7 +18,7 @@ const getProducts = async (req, res) => {
 };
 
 const createProduct = async (req, res) => {
-    const { name, category, remainingQuantity, price } = req.body;
+    const { name, category, remainingQuantity, price, chipset, screenSize, memory, storage, thumbnailUrl, imageUrl } = req.body;
     const errors = {};
 
     if (!name) errors.name = "Name is required";
@@ -33,6 +34,24 @@ const createProduct = async (req, res) => {
     if (typeof price != "number" || !isInt(price + "")) {
         errors.price = "Price is invalid";
     }
+    if (typeof chipset != "undefined" && typeof chipset != "string") {
+        errors.chipset = "chipset is invalid";
+    }
+    if (typeof screenSize != "undefined" && typeof screenSize != "number") {
+        errors.screenSize = "screenSize is invalid";
+    }
+    if (typeof memory != "undefined" && typeof memory != "number") {
+        errors.memory = "memory is invalid";
+    }
+    if (typeof storage != "undefined" && typeof storage != "number") {
+        errors.storage = "storage is invalid";
+    }
+    if (typeof thumbnailUrl != "undefined" && !isUrl(thumbnailUrl)) {
+        errors.thumbnailUrl = "thumbnailUrl is invalid";
+    }
+    if (typeof imageUrl != "undefined" && !isUrl(imageUrl)) {
+        errors.imageUrl = "imageUrl is invalid";
+    }
     if (Object.keys(errors).length > 0) return res.status(400).json(errors);
 
     try {
@@ -40,9 +59,15 @@ const createProduct = async (req, res) => {
         if (!foundCategory) return res.status(404).json({ error: "Category not found" });
         const product = new Product({
             name,
-            category: foundCategory,
             remainingQuantity,
             price,
+            chipset,
+            screenSize,
+            memory,
+            storage,
+            imageUrl,
+            thumbnailUrl,
+            category: foundCategory,
         });
         await product.save();
         return res.status(201).json({

@@ -7,6 +7,13 @@ const ProductSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
+    chipset: String,
+    screenSize: Number,
+    memory: Number,
+    storage: Number,
+    price: Number,
+    imageUrl: String,
+    thumbnailUrl: String,
     category: {
         type: Schema.Types.ObjectId,
         ref: "Category",
@@ -15,7 +22,6 @@ const ProductSchema = new mongoose.Schema({
         type: Number,
         default: 0,
     },
-    price: Number,
 });
 
 ProductSchema.method("transform", function () {
