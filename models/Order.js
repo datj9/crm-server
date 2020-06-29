@@ -3,12 +3,11 @@ const { ProductSchema } = require("./Product");
 
 const OrderSchema = new mongoose.Schema({
     products: {
-        type: [
-            {
-                productDetail: ProductSchema,
-                quantity: Number,
-            },
-        ],
+        type: [ProductSchema],
+        required: true,
+    },
+    quantity: {
+        type: [Number],
         required: true,
     },
     orderTime: {
