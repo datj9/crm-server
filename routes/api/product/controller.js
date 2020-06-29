@@ -17,22 +17,34 @@ const getProducts = async (req, res) => {
     }
 };
 
+const getProductById = async (req, res) => {
+    const { productId } = req.params;
+    if (!ObjectId.isValid(productId)) return res.status(400).json({ error: "productId is invalid" });
+    try {
+        const product = await Product.findById(productId);
+        if (!product) return res.status(404).json({ error: "Product not found" });
+        return res.status(200).json(product);
+    } catch (error) {
+        return res.status(500).json(error);
+    }
+};
+
 const createProduct = async (req, res) => {
     const { name, category, remainingQuantity, price, chipset, screenSize, memory, storage, thumbnailUrl, imageUrl } = req.body;
     const errors = {};
 
-    if (!name) errors.name = "Name is required";
-    if (!category) errors.category = "Category is required";
-    if (!price) errors.price = "Price is required";
+    if (!name) errors.name = "name is required";
+    if (!category) errors.category = "category is required";
+    if (!price) errors.price = "price is required";
     if (Object.keys(errors).length > 0) return res.status(400).json(errors);
 
-    if (!ObjectId.isValid(category + "")) errors.category = "CategoryId is invalid";
+    if (!ObjectId.isValid(category + "")) errors.category = "categoryId is invalid";
 
     if (typeof remainingQuantity != "undefined" && (typeof remainingQuantity != "number" || !isInt(remainingQuantity + ""))) {
         errors.remainingQuantity = "remainingQuantity is invalid";
     }
     if (typeof price != "number" || !isInt(price + "")) {
-        errors.price = "Price is invalid";
+        errors.price = "price is invalid";
     }
     if (typeof chipset != "undefined" && typeof chipset != "string") {
         errors.chipset = "chipset is invalid";
@@ -79,6 +91,73 @@ const createProduct = async (req, res) => {
     }
 };
 
+const updateProduct = async (req, res) => {
+    const { productId } = req.params;
+    const { name, category, remainingQuantity, price, chipset, screenSize, memory, storage, thumbnailUrl, imageUrl } = req.body;
+    const errors = {};
+
+    if (!name) errors.name = "name is required";
+    if (!category) errors.category = "category is required";
+    if (!price) errors.price = "price is required";
+    if (Object.keys(errors).length > 0) return res.status(400).json(errors);
+
+    if (!ObjectId.isValid(category + "")) errors.category = "categoryId is invalid";
+
+    if (typeof remainingQuantity != "undefined" && (typeof remainingQuantity != "number" || !isInt(remainingQuantity + ""))) {
+        errors.remainingQuantity = "remainingQuantity is invalid";
+    }
+    if (typeof price != "number" || !isInt(price + "")) {
+        errors.price = "price is invalid";
+    }
+    if (typeof chipset != "undefined" && typeof chipset != "string") {
+        errors.chipset = "chipset is invalid";
+    }
+    if (typeof screenSize != "undefined" && typeof screenSize != "number") {
+        errors.screenSize = "screenSize is invalid";
+    }
+    if (typeof memory != "undefined" && typeof memory != "number") {
+        errors.memory = "memory is invalid";
+    }
+    if (typeof storage != "undefined" && typeof storage != "number") {
+        errors.storage = "storage is invalid";
+    }
+    if (typeof thumbnailUrl != "undefined" && (typeof thumbnailUrl != "string" || !isUrl(thumbnailUrl))) {
+        errors.thumbnailUrl = "thumbnailUrl is invalid";
+    }
+    if (typeof imageUrl != "undefined" && (typeof imageUrl != "string" || !isUrl(imageUrl))) {
+        errors.imageUrl = "imageUrl is invalid";
+    }
+    if (Object.keys(errors).length > 0) return res.status(400).json(errors);
+
+    try {
+        const foundCategory = await Category.findById(category);
+
+        if (!foundCategory) return res.status(404).json({ error: "Category not found" });
+        await Product.updateOne(
+            { _id: productId },
+            {
+                name,
+                remainingQuantity,
+                price,
+                chipset,
+                screenSize,
+                memory,
+                storage,
+                imageUrl,
+                thumbnailUrl,
+                category: foundCategory,
+            }
+        );
+
+        return res.status(201).json({
+            ...product.transform(),
+            category: foundCategory.transform(),
+        });
+    } catch (error) {
+        return res.status(500).json(error);
+    }
+};
+
 const deleteProduct = async (req, res) => {
     const { productId } = req.params;
 
@@ -94,4 +173,4 @@ const deleteProduct = async (req, res) => {
     }
 };
 
-module.exports = { getProducts, createProduct, deleteProduct };
+module.exports = { getProducts, getProductById, createProduct, updateProduct, deleteProduct };
