@@ -5,8 +5,13 @@ const isUrl = require("validator/lib/isURL");
 const ObjectId = require("mongoose").Types.ObjectId;
 
 const getProducts = async (req, res) => {
+    const { pageSize, pageIndex, category } = req.query;
+    const limit = isInt(pageSize + "") ? parseInt(pageSize) : 5;
+    const skip = isInt(pageIndex + "") ? parseInt(pageIndex - 1) * limit : 0;
+
     try {
-        const foundProducts = await Product.find().populate("category");
+        const foundProducts = await Product.find().where("category.name").eq(category).limit(limit).skip(skip);
+
         const products = foundProducts.map((product) => ({
             ...product.transform(),
             category: product.category && product.category.transform(),

@@ -1,6 +1,5 @@
 const mongoose = require("mongoose");
 const { CategorySchema } = require("./Category");
-const Schema = mongoose.Schema;
 
 const ProductSchema = new mongoose.Schema({
     name: {
@@ -15,8 +14,7 @@ const ProductSchema = new mongoose.Schema({
     imageUrl: String,
     thumbnailUrl: String,
     category: {
-        type: Schema.Types.ObjectId,
-        ref: "Category",
+        type: CategorySchema,
     },
     remainingQuantity: {
         type: Number,

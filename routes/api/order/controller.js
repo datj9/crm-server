@@ -8,15 +8,16 @@ const getOrders = async (req, res) => {
         const foundOrders = await Order.find();
         const transformedOrders = foundOrders.map((order) => {
             let totalPrice = 0;
-
+            let numberOfProducts = 0;
             order.products.forEach((product, j) => {
                 const { id, name, price, imageUrl, thumbnailUrl } = product.transform();
                 const quantity = order.quantity[j];
                 totalPrice += price * quantity;
+                numberOfProducts += quantity;
                 return (order.products[j] = { id, name, price, thumbnailUrl, imageUrl, quantity });
             });
 
-            return { ...order.transform(), totalPrice };
+            return { ...order.transform(), totalPrice, numberOfProducts };
         });
         for (const order of transformedOrders) {
             delete order.quantity;
