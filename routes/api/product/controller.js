@@ -10,7 +10,13 @@ const getProducts = async (req, res) => {
     const skip = isInt(pageIndex + "") ? parseInt(pageIndex - 1) * limit : 0;
 
     try {
-        const foundProducts = await Product.find().where("category.name").eq(category).limit(limit).skip(skip);
+        let foundProducts;
+
+        if (typeof category == "string") {
+            foundProducts = await Product.find().where("category.name").eq(category).limit(limit).skip(skip);
+        } else {
+            foundProducts = await Product.find().limit(limit).skip(skip);
+        }
 
         const products = foundProducts.map((product) => ({
             ...product.transform(),
