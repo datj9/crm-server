@@ -6,14 +6,15 @@ const ObjectId = require("mongoose").Types.ObjectId;
 
 const getProducts = async (req, res) => {
     const { pageSize, pageIndex, category } = req.query;
-    const limit = isInt(pageSize + "") ? parseInt(pageSize) : 5;
-    const skip = isInt(pageIndex + "") ? parseInt(pageIndex - 1) * limit : 0;
+    const limit = isInt(pageSize + "") && pageSize > 0 ? parseInt(pageSize) : 4;
+    const skip = isInt(pageIndex + "") && pageIndex > 0 ? parseInt(pageIndex - 1) * limit : 0;
 
     try {
         let foundProducts;
 
         if (typeof category == "string") {
-            foundProducts = await Product.find().where("category.name").eq(category).limit(limit).skip(skip);
+            const categoryRegEx = new RegExp(category, "i");
+            foundProducts = await Product.find({ "category.name": categoryRegEx }).limit(limit).skip(skip);
         } else {
             foundProducts = await Product.find().limit(limit).skip(skip);
         }
