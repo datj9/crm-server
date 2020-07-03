@@ -7,7 +7,7 @@ const ObjectId = require("mongoose").Types.ObjectId;
 const getProducts = async (req, res) => {
     const { pageSize, pageIndex, category } = req.query;
     const limit = isInt(pageSize + "") && pageSize > 0 ? parseInt(pageSize) : 4;
-    const skip = isInt(pageIndex + "") && pageIndex > 0 ? parseInt(pageIndex - 1) * limit : 0;
+    const skip = isInt(pageIndex + "") && pageIndex > 0 ? (pageIndex - 1) * limit : 0;
 
     try {
         let foundProducts;
